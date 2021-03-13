@@ -1,5 +1,0 @@
-com/paypal/bfs/test/employeeserv/InputValidator/EmployeeValidatorTest.class
-com/paypal/bfs/test/employeeserv/impl/EmployeeResourceImplTest.class
-com/paypal/bfs/test/employeeserv/InputSanitizer/EmployeeInputSanitizerTest.class
-com/paypal/bfs/test/employeeserv/dao/EmployeeDaoH2ImplTest.class
-com/paypal/bfs/test/employeeserv/UserTestUtils.class
