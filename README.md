@@ -36,7 +36,7 @@ We would like you to enhance the existing project and see you complete the follo
 ## Assignment submission
 Thank you very much for your time to take this test. Please upload this complete solution in Github and send us the link to `bfs-sor-interview@paypal.com`.
 
-##Exposed APIs
+### Exposed APIs
 1. GET http://localhost:8080/v1/bfs/employees/:id
 
 2. POST http://localhost:8080/v1/bfs/employee
@@ -54,11 +54,11 @@ content-type: "application/json;charset=UTF-8"
  }
 }
 
-###PostMan Request/Response Details
+### PostMan Request/Response Details
 1. POST : https://imgur.com/tBp0Znd
 2. GET : https://imgur.com/hkHinH4
 3. POST Idempotency : https://imgur.com/y85Bqc4
 
-#Steps to Run Functional Tests
+### Steps to Run Functional Tests
 On my machine, I am using IntellijIdea 2020.2.4. 
 You can run EmployeeResourceFunctionalTest in Intellij by using IDE test run functionality.
