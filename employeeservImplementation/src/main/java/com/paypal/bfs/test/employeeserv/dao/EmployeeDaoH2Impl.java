@@ -3,6 +3,7 @@ package com.paypal.bfs.test.employeeserv.dao;
 import com.paypal.bfs.test.employeeserv.api.model.Address;
 import com.paypal.bfs.test.employeeserv.api.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -23,10 +24,12 @@ import java.util.logging.Logger;
 @Repository
 public class EmployeeDaoH2Impl implements EmployeeDao {
 
-    public final static String SELECT_EMPLOYEE_COUNT_QUERY = "SELECT count(*) as COUNT FROM employee WHERE first_name = ? AND last_name = ? AND date_of_birth = ?";
     public final static String INSERT_EMPLOYEE_QUERY = "INSERT INTO employee (first_name, last_name, date_of_birth) VALUES  (?, ?, ?)";
     public final static String INSERT_ADDRESS_QUERY = "INSERT INTO address (employee_id, line1, line2, city, state, country, zip_code) VALUES (?, ?, ?, ?, ?, ?, ?)";
     public final static String SELECT_EMPLOYEE_QUERY = "SELECT employee.*, address.* FROM employee JOIN address ON employee.id = address.employee_id WHERE id = ?";
+    public final static String SELECT_EMPLOYEE_DUPLICATE_QUERY = "SELECT count(*) as COUNT FROM address where " +
+            "employee_id in (SELECT employee_id as employee_id FROM employee WHERE first_name = ? AND last_name = ? AND date_of_birth = ?) " +
+            "AND line1 = ? And line2 = ? AND city = ? AND state = ? AND country = ? AND zip_code = ?";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -40,9 +43,19 @@ public class EmployeeDaoH2Impl implements EmployeeDao {
      */
     @Override
     public boolean isNewEmployee(Employee employee) {
-        int employeeCount = jdbcTemplate.queryForObject(SELECT_EMPLOYEE_COUNT_QUERY,
-                        new Object[]{employee.getFirstName(), employee.getLastName(), employee.getDateOfBirth()}, Integer.class);
-        return employeeCount == 0;
+        try {
+            int empCount = jdbcTemplate.queryForObject(SELECT_EMPLOYEE_DUPLICATE_QUERY,
+                    new Object[]{employee.getFirstName(), employee.getLastName(), employee.getDateOfBirth(),
+                    employee.getAddress().getLine1(), employee.getAddress().getLine2(), employee.getAddress().getCity(),
+                    employee.getAddress().getState(), employee.getAddress().getCountry(), employee.getAddress().getZipCode()},
+                    (resultSet, i) -> {
+                        return resultSet.getInt("COUNT");
+                    });
+            return empCount == 0;
+        } catch (DataAccessException dataAccessException) {
+            logger.log(Level.WARNING, String.format("Encountered dataAccessException exception : %s", dataAccessException.getMessage()));
+        }
+        return true;
     }
 
 

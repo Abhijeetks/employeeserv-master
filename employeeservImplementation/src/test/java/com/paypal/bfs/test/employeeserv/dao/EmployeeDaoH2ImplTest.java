@@ -29,10 +29,19 @@ public class EmployeeDaoH2ImplTest {
     @Test
     public void test_EmployeeIsNotNew() {
         Employee employee = UserTestUtils.getEmployee();
-        when(jdbcTemplate.queryForObject(Mockito.any(String.class), Mockito.any(Object[].class), eq(Integer.class))).thenReturn(1);
+        when(jdbcTemplate.queryForObject(Mockito.any(String.class), Mockito.any(Object[].class), Mockito.any(RowMapper.class))).thenReturn(1);;
         boolean notNewEmployee = employeeDaoH2Impl.isNewEmployee(employee);
-        Assert.assertTrue(notNewEmployee == false);
-        verify(jdbcTemplate, times(1)).queryForObject(Mockito.any(String.class), Mockito.any(Object[].class), eq(Integer.class));
+        Assert.assertFalse(notNewEmployee);
+        verify(jdbcTemplate, times(1)).queryForObject(Mockito.any(String.class), Mockito.any(Object[].class), Mockito.any(RowMapper.class));
+    }
+
+    @Test
+    public void test_EmployeeIsNew() {
+        Employee employee = UserTestUtils.getEmployee();
+        when(jdbcTemplate.queryForObject(Mockito.any(String.class), Mockito.any(Object[].class), Mockito.any(RowMapper.class))).thenReturn(0);;
+        boolean newEmployee = employeeDaoH2Impl.isNewEmployee(employee);
+        Assert.assertTrue(newEmployee);
+        verify(jdbcTemplate, times(1)).queryForObject(Mockito.any(String.class), Mockito.any(Object[].class), Mockito.any(RowMapper.class));
     }
 
     @Test
